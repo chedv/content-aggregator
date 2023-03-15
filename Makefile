@@ -21,3 +21,7 @@ check_black:
 .PHONY: mypy
 mypy:
 	pipenv run mypy
+
+.PHONY: api_tests
+api_tests:
+	pipenv run pytest tests/api_tests
