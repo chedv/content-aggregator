@@ -1,9 +1,8 @@
-from contextlib import asynccontextmanager, AbstractAsyncContextManager
-from typing import Callable
+from contextlib import asynccontextmanager
+from typing import AsyncIterator
 
 import asyncpg
 from asyncpg import Pool, Connection
-from asyncpg.pool import PoolConnectionProxy
 from sqlalchemy import ClauseElement
 from sqlalchemy.dialects import postgresql
 
@@ -20,8 +19,9 @@ class SQLAlchemyConnection(Connection):
 
 
 async def database_connection_pool_resource(settings: Settings):
-    async with asyncpg.create_pool(settings.POSTGRES_DATABASE_URI,
-                                   connection_class=SQLAlchemyConnection) as connection_pool:
+    async with asyncpg.create_pool(
+        settings.POSTGRES_DATABASE_URI, connection_class=SQLAlchemyConnection
+    ) as connection_pool:
         yield connection_pool
 
 
@@ -30,17 +30,17 @@ class Database:
         self._connection_pool = connection_pool
 
     @asynccontextmanager
-    async def connection_provider(self) -> Callable[..., AbstractAsyncContextManager[PoolConnectionProxy]]:
+    async def connection_provider(self) -> AsyncIterator[SQLAlchemyConnection]:
         async with self._connection_pool.acquire() as connection:
-            yield connection
+            yield connection  # type: ignore
 
     @asynccontextmanager
-    async def transaction_provider(self) -> Callable[..., AbstractAsyncContextManager[PoolConnectionProxy]]:
+    async def transaction_provider(self) -> AsyncIterator[SQLAlchemyConnection]:
         async with self._connection_pool.acquire() as connection:
             transaction = connection.transaction()
             await transaction.start()
             try:
-                yield connection
+                yield connection  # type: ignore
             except Exception:
                 await transaction.rollback()
                 raise

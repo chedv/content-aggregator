@@ -17,6 +17,9 @@ alembic = "==1.9.4"
 [dev-packages]
 pytest = "==7.2.1"
 async-asgi-testclient = "==1.4.11"
+black = "==23.1.0"
+mypy = "==1.1.1"
+asyncpg-stubs = "==0.27.0"
 
 [requires]
 python_version = "3.11"

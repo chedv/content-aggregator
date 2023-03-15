@@ -17,5 +17,6 @@ class Container(containers.DeclarativeContainer):
 
     tmdb_client = providers.Factory(TmdbClient, settings=settings)
 
-    collect_movies_data_service = providers.Factory(CollectMoviesDataService, database=database,
-                                                    movies_repo=movies_repository, tmdb_client=tmdb_client)
+    collect_movies_data_service = providers.Factory(
+        CollectMoviesDataService, database=database, movies_repo=movies_repository, tmdb_client=tmdb_client
+    )

@@ -10,6 +10,6 @@ router = APIRouter()
 @router.post("/collect_movies_data")
 @inject
 async def collect_and_store_movies_data_view(
-        collect_service: CollectMoviesDataService = Depends(Provide[Container.collect_movies_data_service])
+    collect_service: CollectMoviesDataService = Depends(Provide[Container.collect_movies_data_service]),
 ):
     await collect_service.collect_and_store_movies_data()

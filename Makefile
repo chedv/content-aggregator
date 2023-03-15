@@ -1,11 +1,23 @@
 .PHONY: create_migration
 create_migration:
-	alembic revision --autogenerate -m "$(message)" --rev-id="$(rev_id)"
+	pipenv run alembic revision --autogenerate -m "$(message)" --rev-id="$(rev_id)"
 
 .PHONY: migrate
 migrate:
-	alembic upgrade head
+	pipenv run alembic upgrade head
 
 .PHONY: revert_migration
 revert_migration:
-	alembic downgrade -1
+	pipenv run alembic downgrade -1
+
+.PHONY: run_black
+run_black:
+	pipenv run black --config pyproject.toml src tests migrations
+
+.PHONY: check_black
+check_black:
+	pipenv run black --check --config pyproject.toml src tests migrations
+
+.PHONY: mypy
+mypy:
+	pipenv run mypy
