@@ -1,0 +1,65 @@
+name: Continuous Integration
+on: [push]
+jobs:
+  code_style_check:
+    name: Code style check
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install pipenv
+        run: pip install pipenv==2022.12.19
+      - name: Install dependencies
+        run: pipenv install --dev
+      - name: Black check
+        run: make check_black
+  type_check:
+    name: Type check
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install pipenv
+        run: pip install pipenv==2022.12.19
+      - name: Install dependencies
+        run: pipenv install --dev
+      - name: Mypy check
+        run: make mypy
+  api_tests:
+    name: API tests
+    runs-on: ubuntu-22.04
+    services:
+      db:
+        image: postgres:14.7
+        environment:
+          - POSTGRES_DB=raw
+          - POSTGRES_USER=user
+          - POSTGRES_PASSWORD=password
+        ports:
+          - 5432:5432
+    env:
+      POSTGRES_DATABASE_URI: postgresql://user:password@localhost:5432/raw
+      TMDB_API_KEY_V3: key
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Install pipenv
+        run: pip install pipenv==2022.12.19
+      - name: Install dependencies
+        run: pipenv install --dev
+      - name: Run database migrations
+        run: make migrate
+      - name: Run API tests
+        run: make api_tests
