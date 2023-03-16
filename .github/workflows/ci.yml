@@ -51,7 +51,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     env:
-      POSTGRES_DATABASE_URI: postgresql://user:password@postgres:5432/raw
+      POSTGRES_DATABASE_URI: postgresql://user:password@localhost:5432/raw
       TMDB_API_KEY_V3: key
     steps:
       - name: Checkout sources
