@@ -37,14 +37,19 @@ jobs:
     name: API tests
     runs-on: ubuntu-22.04
     services:
-      db:
+      postgres:
         image: postgres:14.7
-        environment:
-          - POSTGRES_DB=raw
-          - POSTGRES_USER=user
-          - POSTGRES_PASSWORD=password
+        env:
+          POSTGRES_DB: raw
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
         ports:
           - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     env:
       POSTGRES_DATABASE_URI: postgresql://user:password@localhost:5432/raw
       TMDB_API_KEY_V3: key
